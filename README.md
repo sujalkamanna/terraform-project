@@ -1,21 +1,22 @@
-# 🏗️ AWS Three-Tier Architecture with CloudFormation
+# 🏗️ Terraform AWS VPC Infrastructure
 
 <div align="center">
 
-![AWS Architecture](https://img.shields.io/badge/AWS-Architecture-orange?style=for-the-badge&logo=amazon-aws&logoColor=white)
-[![CloudFormation](https://img.shields.io/badge/IaC-CloudFormation-blue?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/cloudformation/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
-[![High Availability](https://img.shields.io/badge/HA-Multi--AZ-red?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
+![Terraform](https://img.shields.io/badge/Terraform-v1.0+-623CE4?style=for-the-badge&logo=terraform&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS-Cloud-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![IaC](https://img.shields.io/badge/IaC-Automated-green?style=for-the-badge&logo=terraform&logoColor=white)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
-### 🎯 Enterprise-Grade Three-Tier Architecture on AWS
+### 🎯 Production-Ready VPC Infrastructure as Code
 
-**Infrastructure as Code for scalable, secure, and highly available cloud applications**
+**Automated, repeatable, and version-controlled AWS networking with Terraform**
 
-[Architecture](#-architecture-deep-dive) • [Quick Deploy](#-quick-deployment) • [Features](#-key-features) • [Extend](#-future-enhancements)
+[Architecture](#-architecture-overview) • [Quick Start](#-quick-start) • [Features](#-features) • [Modules](#-infrastructure-components)
 
 </div>
 
 ---
+
 ## 📸 Architecture
 
 Below is the network architecture of the VPC setup:
@@ -26,253 +27,114 @@ Below is the network architecture of the VPC setup:
 
 This project uses **Terraform** to create a **VPC infrastructure** on AWS, including public and private subnets, Internet Gateway, NAT Gateway, route tables, security groups, and EC2 instances.
 
+## 🌟 Why This Project?
 
-## 🌟 What Makes This Special?
+Building AWS infrastructure manually is **time-consuming**, **error-prone**, and **not reproducible**. This Terraform project solves that by providing:
 
-This isn't just another CloudFormation template—it's a **production-ready foundation** for enterprise applications that prioritizes:
+<div align="center">
 
-<table>
-<tr>
-<td align="center" width="25%">
-<img src="https://img.icons8.com/clouds/100/000000/high-priority.png" width="80"/><br/>
-<b>High Availability</b><br/>
-Multi-AZ deployment<br/>
-Zero single point of failure
-</td>
-<td align="center" width="25%">
-<img src="https://img.icons8.com/clouds/100/000000/security-checked.png" width="80"/><br/>
-<b>Security First</b><br/>
-Defense in depth<br/>
-Principle of least privilege
-</td>
-<td align="center" width="25%">
-<img src="https://img.icons8.com/clouds/100/000000/graph.png" width="80"/><br/>
-<b>Auto Scaling</b><br/>
-Elastic capacity<br/>
-Cost optimization
-</td>
-<td align="center" width="25%">
-<img src="https://img.icons8.com/clouds/100/000000/code.png" width="80"/><br/>
-<b>100% IaC</b><br/>
-Repeatable deployments<br/>
-Version controlled
-</td>
-</tr>
-</table>
+| 🚀 Fast Deployment | 🔄 Repeatable | 📝 Version Controlled | 💰 Cost Efficient |
+|:------------------:|:-------------:|:---------------------:|:-----------------:|
+| Deploy in **5 minutes** | Identical environments | Track all changes | Destroy when not needed |
+
+</div>
 
 ---
 
-## 🎯 Project Mission
+## 📐 Architecture Overview
 
-Modern cloud applications demand more than just servers—they need **resilient architectures** that can:
+### 🎨 Visual Network Design
 
-```mermaid
-graph LR
-    A[Scale Automatically] --> B[Handle Failures Gracefully]
-    B --> C[Maintain Security]
-    C --> D[Control Costs]
-    D --> E[Deploy Consistently]
-    E --> A
+![VPC Architecture](outputs/archicture.jpg)
 
-```
-
-This project delivers **all of that** through Infrastructure as Code.
-
----
-
-## 🏛️ Architecture Deep Dive
-
-### 🎨 Visual Architecture
+### 🔄 Traffic Flow Diagram
 
 ```mermaid
 graph TB
     subgraph Internet
-        Users[👥 End Users]
+        Users[👥 Internet Users]
+    end
+    
+    subgraph VPC[VPC - 10.0.0.0/24]
         IGW[🌐 Internet Gateway]
-    end
-    
-    subgraph VPC[VPC - 10.0.0.0/16]
-        subgraph AZ1[Availability Zone A]
-            subgraph Public1[Public Subnet<br/>10.0.1.0/24]
-                WEB1[🌐 Web Server 1<br/>EC2 Instance]
-                NAT1[🔀 NAT Gateway]
-            end
-            
-            subgraph Private1[Private Subnet<br/>10.0.11.0/24]
-                APP1[⚙️ App Server 1<br/>EC2 Instance]
-            end
-            
-            subgraph Data1[DB Subnet<br/>10.0.21.0/24]
-                DB1[(🗄️ RDS Primary<br/>MySQL)]
-            end
+        
+        subgraph PublicSubnet[Public Subnet - 10.0.0.0/26]
+            PublicEC2[🖥️ Public EC2<br/>Web Server]
+            NAT[🔀 NAT Gateway]
         end
         
-        subgraph AZ2[Availability Zone B]
-            subgraph Public2[Public Subnet<br/>10.0.2.0/24]
-                WEB2[🌐 Web Server 2<br/>EC2 Instance]
-                NAT2[🔀 NAT Gateway]
-            end
-            
-            subgraph Private2[Private Subnet<br/>10.0.12.0/24]
-                APP2[⚙️ App Server 2<br/>EC2 Instance]
-            end
-            
-            subgraph Data2[DB Subnet<br/>10.0.22.0/24]
-                DB2[(🗄️ RDS Standby<br/>MySQL)]
-            end
+        subgraph PrivateSubnet[Private Subnet - 10.0.0.64/26]
+            PrivateEC2[🖥️ Private EC2<br/>App Server]
         end
         
-        ALB[⚖️ Application Load Balancer]
+        PublicRT[📋 Public Route Table]
+        PrivateRT[📋 Private Route Table]
     end
     
-    Users -->|HTTPS| IGW
-    IGW --> ALB
-    ALB -->|Route| WEB1
-    ALB -->|Route| WEB2
+    Users -->|HTTP/HTTPS| IGW
+    IGW --> PublicRT
+    PublicRT --> PublicEC2
     
-    WEB1 -->|API Calls| APP1
-    WEB2 -->|API Calls| APP2
+    PublicEC2 -.->|Internal Traffic| PrivateEC2
+    PrivateEC2 -->|Outbound Only| NAT
+    NAT --> IGW
     
-    APP1 & APP2 -->|SQL Queries| DB1
-    DB1 -.->|Replication| DB2
+    PrivateRT --> PrivateEC2
+    NAT -.-> PrivateRT
     
-    APP1 & APP2 -->|Internet Access| NAT1
-    APP1 & APP2 -->|Internet Access| NAT2
-    
-  
+    style Users fill:#e1f5ff
+    style IGW fill:#fff3cd
+    style PublicEC2 fill:#d4edda
+    style PrivateEC2 fill:#f8d7da
+    style NAT fill:#d1ecf1
 ```
 
 ---
 
-### 🔄 Traffic Flow Patterns
-
-**User Request Journey:**
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant IGW as Internet Gateway
-    participant ALB as Load Balancer
-    participant Web as Web Tier
-    participant App as App Tier
-    participant DB as Database Tier
-
-    User->>IGW: 1. HTTPS Request
-    IGW->>ALB: 2. Route to ALB
-    ALB->>ALB: 3. SSL Termination
-    ALB->>Web: 4. Forward to Web Server
-    Web->>App: 5. API Call (via private subnet)
-    App->>DB: 6. Database Query
-    DB-->>App: 7. Return Data
-    App-->>Web: 8. Process & Return
-    Web-->>ALB: 9. HTML Response
-    ALB-->>User: 10. Encrypted Response
-```
-
----
-
-### 📊 Tier Breakdown
+## ✨ Features
 
 <table>
 <tr>
-<th width="25%">Tier</th>
-<th width="25%">Components</th>
-<th width="25%">Subnet Type</th>
-<th width="25%">Security</th>
-</tr>
+<td width="50%">
 
-<tr>
-<td>
-
-**🌐 Web Tier**<br/>
-*Presentation Layer*
+### 🏗️ **Complete VPC Setup**
+- ✅ Custom VPC with CIDR `10.0.0.0/24`
+- ✅ Public subnet (`10.0.0.0/26`)
+- ✅ Private subnet (`10.0.0.64/26`)
+- ✅ Internet Gateway for public access
+- ✅ NAT Gateway for private outbound
 
 </td>
-<td>
+<td width="50%">
 
-• EC2 Instances<br/>
-• Auto Scaling Group<br/>
-• Application Load Balancer<br/>
-• Static content (S3/CloudFront)
-
-</td>
-<td>
-
-**Public Subnets**<br/>
-`10.0.1.0/24` (AZ-A)<br/>
-`10.0.2.0/24` (AZ-B)
-
-</td>
-<td>
-
-• Internet-facing<br/>
-• HTTP/HTTPS only<br/>
-• Web Security Group<br/>
-• SSL/TLS termination
+### 🔒 **Secure by Default**
+- ✅ Isolated private subnet
+- ✅ Security group rules
+- ✅ No direct internet to private
+- ✅ Principle of least privilege
+- ✅ Encrypted state storage
 
 </td>
 </tr>
-
 <tr>
-<td>
+<td width="50%">
 
-**⚙️ App Tier**<br/>
-*Business Logic Layer*
-
-</td>
-<td>
-
-• EC2 Instances<br/>
-• Auto Scaling Group<br/>
-• Application servers<br/>
-• API endpoints
+### 🚀 **Infrastructure as Code**
+- ✅ Terraform managed
+- ✅ Version controlled
+- ✅ Reproducible deployments
+- ✅ S3 remote state backend
+- ✅ DynamoDB state locking
 
 </td>
-<td>
+<td width="50%">
 
-**Private Subnets**<br/>
-`10.0.11.0/24` (AZ-A)<br/>
-`10.0.12.0/24` (AZ-B)
-
-</td>
-<td>
-
-• No direct internet<br/>
-• Accept from Web tier only<br/>
-• NAT for outbound<br/>
-• App Security Group
-
-</td>
-</tr>
-
-<tr>
-<td>
-
-**🗄️ Database Tier**<br/>
-*Data Layer*
-
-</td>
-<td>
-
-• RDS Multi-AZ<br/>
-• Read Replicas<br/>
-• Automated backups<br/>
-• Encryption at rest
-
-</td>
-<td>
-
-**Isolated Subnets**<br/>
-`10.0.21.0/24` (AZ-A)<br/>
-`10.0.22.0/24` (AZ-B)
-
-</td>
-<td>
-
-• Completely isolated<br/>
-• Accept from App tier only<br/>
-• No internet access<br/>
-• DB Security Group
+### 💻 **Pre-configured Resources**
+- ✅ Ubuntu EC2 instances
+- ✅ Proper route tables
+- ✅ Subnet associations
+- ✅ Elastic IP for NAT
+- ✅ Security groups
 
 </td>
 </tr>
@@ -280,384 +142,681 @@ sequenceDiagram
 
 ---
 
-## 🔐 Security Architecture
+## 📂 Project Structure
 
-### Defense in Depth Strategy
-
-```mermaid
-graph TB
-    A[🌐 Internet] --> B[WAF - Web Application Firewall]
-    B --> C[CloudFront - DDoS Protection]
-    C --> D[ALB - SSL/TLS Termination]
-    D --> E[Security Group - Web Tier]
-    E --> F[Security Group - App Tier]
-    F --> G[Security Group - Database Tier]
-    G --> H[Encryption at Rest]
-    
-   
 ```
-
-### 🛡️ Security Group Rules
-
-**Web Tier Security Group:**
-```yaml
-Inbound:
-  - Port 80 (HTTP) from 0.0.0.0/0
-  - Port 443 (HTTPS) from 0.0.0.0/0
-
-Outbound:
-  - Port 8080 to App Tier Security Group
-  - Port 443 to Internet (for updates)
-```
-
-**Application Tier Security Group:**
-```yaml
-Inbound:
-  - Port 8080 from Web Tier Security Group only
-
-Outbound:
-  - Port 3306 to Database Tier Security Group
-  - Port 443 to Internet via NAT (for external APIs)
-```
-
-**Database Tier Security Group:**
-```yaml
-Inbound:
-  - Port 3306 from App Tier Security Group only
-
-Outbound:
-  - None (completely isolated)
+📦 terraform-vpc/
+│
+├── 📄 main.tf                      # Core infrastructure definitions
+│   ├── VPC configuration
+│   ├── Subnets (public & private)
+│   ├── Internet & NAT Gateways
+│   ├── Route tables & associations
+│   ├── Security groups
+│   └── EC2 instances
+│
+├── 📄 provider.tf                  # AWS provider configuration
+│   ├── AWS region
+│   ├── Provider version
+│   └── Authentication
+│
+├── 📄 backend.tf                   # Remote state configuration
+│   ├── S3 bucket for state
+│   ├── DynamoDB for locking
+│   └── Encryption settings
+│
+├── 📄 variables.tf                 # Input variables (create this)
+├── 📄 outputs.tf                   # Output values (create this)
+├── 📄 terraform.tfvars             # Variable values (gitignored)
+│
+├── 📁 outputs/                     # Architecture diagrams
+│   └── architecture.jpg
+│
+├── 📁 .terraform/                  # Terraform plugins (gitignored)
+├── 📄 .terraform.lock.hcl          # Provider version lock
+├── 📄 terraform.tfstate            # Local state (gitignored)
+├── 📄 terraform.tfstate.backup     # State backup (gitignored)
+│
+├── 📄 .gitignore                   # Git ignore rules
+├── 📄 README.md                    # This file
+└── 📄 LICENSE                      # MIT License
 ```
 
 ---
 
-## 🌐 Network Architecture
-
-### IP Address Design
-
-| Component | CIDR Block | Available IPs | Purpose |
-|-----------|-----------|---------------|---------|
-| **VPC** | `10.0.0.0/16` | 65,536 | Main VPC network |
-| **Public Subnet AZ-A** | `10.0.1.0/24` | 251 | Web tier (AZ-A) |
-| **Public Subnet AZ-B** | `10.0.2.0/24` | 251 | Web tier (AZ-B) |
-| **Private Subnet AZ-A** | `10.0.11.0/24` | 251 | App tier (AZ-A) |
-| **Private Subnet AZ-B** | `10.0.12.0/24` | 251 | App tier (AZ-B) |
-| **DB Subnet AZ-A** | `10.0.21.0/24` | 251 | Database (AZ-A) |
-| **DB Subnet AZ-B** | `10.0.22.0/24` | 251 | Database (AZ-B) |
-
-### Routing Tables
-
-**Public Route Table:**
-```
-Destination         Target
-10.0.0.0/16        local
-0.0.0.0/0          igw-xxxxx (Internet Gateway)
-```
-
-**Private Route Table:**
-```
-Destination         Target
-10.0.0.0/16        local
-0.0.0.0/0          nat-xxxxx (NAT Gateway)
-```
-
-**Database Route Table:**
-```
-Destination         Target
-10.0.0.0/16        local
-(No internet route - completely isolated)
-```
-
----
-
-## 🚀 Quick Deployment
+## 🚀 Quick Start
 
 ### Prerequisites Checklist
 
 ```bash
+✅ Terraform v1.0+ installed
+✅ AWS CLI configured with credentials
 ✅ Active AWS account
-✅ IAM user with CloudFormation, VPC, EC2 permissions
-✅ AWS CLI installed (optional)
-✅ Basic understanding of AWS networking
+✅ Basic understanding of AWS VPC
+✅ Git installed (optional)
 ```
 
-### 🎯 One-Click Deployment
+### 📥 Installation Steps
 
-**Method 1: AWS Console (Recommended for beginners)**
+<details open>
+<summary><b>1️⃣ Install Terraform</b></summary>
 
-1. **Clone Repository**
-   ```bash
-   git clone https://github.com/sujalkamanna/three-tier-architecture.git
-   cd three-tier-architecture
-   ```
-
-2. **Open AWS Console**
-   - Navigate to **CloudFormation** service
-   - Click **Create stack** → **With new resources**
-
-3. **Upload Template**
-   - Choose **Upload a template file**
-   - Select: `cloudformation/vpc-network.yaml`
-   - Click **Next**
-
-4. **Configure Stack**
-   - **Stack name**: `three-tier-vpc-prod`
-   - **Environment**: `Production`
-   - Click **Next** → **Next**
-
-5. **Deploy**
-   - Check ✅ "I acknowledge that AWS CloudFormation might create IAM resources"
-   - Click **Create stack**
-
-6. **Wait for Completion**
-   - Status will change: `CREATE_IN_PROGRESS` → `CREATE_COMPLETE`
-   - Time: ~5-10 minutes
-
----
-
-**Method 2: AWS CLI (For automation)**
-
+**macOS:**
 ```bash
-# Validate template
-aws cloudformation validate-template \
-    --template-body file://cloudformation/vpc-network.yaml
-
-# Create stack
-aws cloudformation create-stack \
-    --stack-name three-tier-vpc-prod \
-    --template-body file://cloudformation/vpc-network.yaml \
-    --parameters ParameterKey=Environment,ParameterValue=Production \
-    --capabilities CAPABILITY_IAM
-
-# Monitor deployment
-aws cloudformation wait stack-create-complete \
-    --stack-name three-tier-vpc-prod
-
-# Get outputs
-aws cloudformation describe-stacks \
-    --stack-name three-tier-vpc-prod \
-    --query 'Stacks[0].Outputs'
+brew tap hashicorp/tap
+brew install hashicorp/tap/terraform
 ```
 
----
-
-## 📋 Post-Deployment Validation
-
-### Automated Validation Script
-
+**Ubuntu/Debian:**
 ```bash
-#!/bin/bash
-# validate-deployment.sh
-
-STACK_NAME="three-tier-vpc-prod"
-
-echo "🔍 Validating Three-Tier Architecture Deployment..."
-
-# 1. Check VPC
-echo "✓ Checking VPC..."
-aws ec2 describe-vpcs --filters "Name=tag:aws:cloudformation:stack-name,Values=$STACK_NAME"
-
-# 2. Check Subnets
-echo "✓ Checking Subnets (should be 6)..."
-aws ec2 describe-subnets --filters "Name=tag:aws:cloudformation:stack-name,Values=$STACK_NAME" | grep SubnetId | wc -l
-
-# 3. Check Internet Gateway
-echo "✓ Checking Internet Gateway..."
-aws ec2 describe-internet-gateways --filters "Name=tag:aws:cloudformation:stack-name,Values=$STACK_NAME"
-
-# 4. Check NAT Gateways
-echo "✓ Checking NAT Gateways (should be 2)..."
-aws ec2 describe-nat-gateways --filter "Name=tag:aws:cloudformation:stack-name,Values=$STACK_NAME" | grep NatGatewayId | wc -l
-
-# 5. Check Route Tables
-echo "✓ Checking Route Tables..."
-aws ec2 describe-route-tables --filters "Name=tag:aws:cloudformation:stack-name,Values=$STACK_NAME"
-
-# 6. Check Security Groups
-echo "✓ Checking Security Groups (should be 3)..."
-aws ec2 describe-security-groups --filters "Name=tag:aws:cloudformation:stack-name,Values=$STACK_NAME" | grep GroupId | wc -l
-
-echo "✅ Validation Complete!"
+wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+sudo apt update && sudo apt install terraform
 ```
 
-### Manual Checklist
-
-| Component | Expected | Verify |
-|-----------|----------|--------|
-| **VPC** | 1 VPC with `10.0.0.0/16` | ☐ |
-| **Subnets** | 6 subnets (2 public, 2 private, 2 DB) | ☐ |
-| **Internet Gateway** | 1 attached to VPC | ☐ |
-| **NAT Gateways** | 2 (one per AZ) | ☐ |
-| **Elastic IPs** | 2 (for NAT Gateways) | ☐ |
-| **Route Tables** | 3 (public, private, DB) | ☐ |
-| **Security Groups** | 3 (web, app, database) | ☐ |
-| **Tags** | All resources properly tagged | ☐ |
-
----
-
-## 🎓 CloudFormation Template Explained
-
-### Template Structure
-
-```yaml
-AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Three-Tier Architecture with Multi-AZ'
-
-Parameters:
-  EnvironmentName:
-    Type: String
-    Default: Production
-    Description: Environment name prefix
-
-Resources:
-  # 1. VPC
-  VPC:
-    Type: AWS::EC2::VPC
-    Properties:
-      CidrBlock: 10.0.0.0/16
-      EnableDnsHostnames: true
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName}-VPC
-
-  # 2. Internet Gateway
-  InternetGateway:
-    Type: AWS::EC2::InternetGateway
-
-  # 3. Subnets (6 total)
-  PublicSubnet1:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref VPC
-      CidrBlock: 10.0.1.0/24
-      AvailabilityZone: !Select [0, !GetAZs '']
-
-  # 4. NAT Gateways
-  NatGateway1:
-    Type: AWS::EC2::NatGateway
-    Properties:
-      AllocationId: !GetAtt NatGateway1EIP.AllocationId
-      SubnetId: !Ref PublicSubnet1
-
-  # 5. Route Tables
-  PublicRouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref VPC
-
-  # 6. Security Groups
-  WebSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Security group for web tier
-
-Outputs:
-  VPCId:
-    Description: VPC ID
-    Value: !Ref VPC
-    Export:
-      Name: !Sub ${EnvironmentName}-VPC-ID
-```
-
----
-
-### 💡 Cost Optimization Tips
-
-- Use **Reserved Instances** for predictable workloads (save up to 72%)
-- Enable **Auto Scaling** to scale down during off-peak hours
-- Use **Spot Instances** for non-critical app tier servers
-- Consider **AWS Savings Plans** for long-term commitments
-- Delete **NAT Gateways** in dev/test environments
-- Use **S3 Gateway Endpoints** (free) instead of NAT for S3 access
-
----
-
-## 🔧 Extend the Architecture
-
-### Phase 1: Add Compute Resources
-
+**Verify:**
 ```bash
-# Deploy web tier instances
-aws cloudformation create-stack \
-    --stack-name web-tier \
-    --template-body file://cloudformation/web-tier.yaml \
-    --parameters ParameterKey=VPCStackName,ParameterValue=three-tier-vpc-prod
+terraform version
 ```
 
-### Phase 2: Add Database
-
-```bash
-# Deploy RDS Multi-AZ
-aws cloudformation create-stack \
-    --stack-name database-tier \
-    --template-body file://cloudformation/database-tier.yaml \
-    --parameters ParameterKey=VPCStackName,ParameterValue=three-tier-vpc-prod
-```
-
-### Phase 3: Add Monitoring
-
-```bash
-# Deploy CloudWatch dashboards & alarms
-aws cloudformation create-stack \
-    --stack-name monitoring-stack \
-    --template-body file://cloudformation/monitoring.yaml
-```
-
----
-
-## 🛠️ Troubleshooting
+</details>
 
 <details>
-<summary><b>Stack Creation Failed</b></summary>
+<summary><b>2️⃣ Configure AWS CLI</b></summary>
 
-**Common Causes:**
-1. Insufficient IAM permissions
-2. Service limit exceeded (EIPs, VPCs)
-3. Invalid CIDR blocks
+```bash
+# Install AWS CLI
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
+# Configure credentials
+aws configure
+```
+
+**Enter when prompted:**
+```
+AWS Access Key ID: YOUR_ACCESS_KEY
+AWS Secret Access Key: YOUR_SECRET_KEY
+Default region name: us-east-1
+Default output format: json
+```
+
+</details>
+
+<details open>
+<summary><b>3️⃣ Clone & Deploy</b></summary>
+
+```bash
+# Clone repository
+git clone https://github.com/sujalkamanna/terraform-vpc.git
+cd terraform-vpc
+
+# Initialize Terraform
+terraform init
+
+# Review execution plan
+terraform plan
+
+# Apply configuration
+terraform apply
+```
+
+**Confirm with:** `yes`
+
+**Deployment time:** ~3-5 minutes
+
+</details>
+
+---
+
+## 🎯 Deployment Workflow
+
+### Complete Deployment Process
+
+```mermaid
+graph LR
+    A[📥 Clone Repo] --> B[🔧 terraform init]
+    B --> C[📋 terraform plan]
+    C --> D{Review Plan}
+    D -->|Approve| E[🚀 terraform apply]
+    D -->|Changes Needed| F[✏️ Edit .tf files]
+    F --> C
+    E --> G[✅ Infrastructure Ready]
+    
+    style A fill:#e1f5ff
+    style B fill:#fff3cd
+    style C fill:#d4edda
+    style D fill:#f8d7da
+    style E fill:#d1ecf1
+    style G fill:#d4edda
+```
+
+---
+
+## 🏗️ Infrastructure Components
+
+### 🌐 VPC Configuration
+
+```hcl
+resource "aws_vpc" "main" {
+  cidr_block           = "10.0.0.0/24"
+  enable_dns_hostnames = true
+  enable_dns_support   = true
+
+  tags = {
+    Name        = "terraform-vpc"
+    Environment = "production"
+    ManagedBy   = "terraform"
+  }
+}
+```
+
+**What you get:**
+- 256 IP addresses (`10.0.0.0` - `10.0.0.255`)
+- DNS resolution enabled
+- DNS hostnames enabled
+- Production-ready tagging
+
+---
+
+### 🌍 Subnet Layout
+
+| Subnet Type | CIDR Block | IP Range | Available IPs | Purpose |
+|-------------|-----------|----------|---------------|---------|
+| **Public** | `10.0.0.0/26` | 10.0.0.0 - 10.0.0.63 | 59 | Web servers, bastion |
+| **Private** | `10.0.0.64/26` | 10.0.0.64 - 10.0.0.127 | 59 | App servers, databases |
+
+**Public Subnet:**
+```hcl
+resource "aws_subnet" "public" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = "10.0.0.0/26"
+  availability_zone       = "us-east-1a"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "public-subnet"
+    Type = "public"
+  }
+}
+```
+
+**Private Subnet:**
+```hcl
+resource "aws_subnet" "private" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.0.64/26"
+  availability_zone = "us-east-1a"
+
+  tags = {
+    Name = "private-subnet"
+    Type = "private"
+  }
+}
+```
+
+---
+
+### 🔐 Security Groups
+
+**Public EC2 Security Group:**
+```hcl
+resource "aws_security_group" "public" {
+  name        = "public-sg"
+  description = "Security group for public EC2 instances"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    description = "HTTP from Internet"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "HTTPS from Internet"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "SSH from Admin"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["YOUR_IP/32"]  # Replace with your IP
+  }
+
+  egress {
+    description = "All outbound"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+```
+
+**Private EC2 Security Group:**
+```hcl
+resource "aws_security_group" "private" {
+  name        = "private-sg"
+  description = "Security group for private EC2 instances"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    description     = "All traffic from public subnet"
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    security_groups = [aws_security_group.public.id]
+  }
+
+  egress {
+    description = "All outbound via NAT"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+```
+
+---
+
+### 🖥️ EC2 Instances
+
+**Public EC2 (Web Server):**
+```hcl
+resource "aws_instance" "public" {
+  ami                    = "ami-0c55b159cbfafe1f0"  # Ubuntu 20.04
+  instance_type          = "t2.micro"
+  subnet_id              = aws_subnet.public.id
+  vpc_security_group_ids = [aws_security_group.public.id]
+  key_name               = "your-key-pair"
+
+  user_data = <<-EOF
+              #!/bin/bash
+              apt update -y
+              apt install -y nginx
+              systemctl start nginx
+              systemctl enable nginx
+              EOF
+
+  tags = {
+    Name = "public-web-server"
+    Tier = "web"
+  }
+}
+```
+
+**Private EC2 (App Server):**
+```hcl
+resource "aws_instance" "private" {
+  ami                    = "ami-0c55b159cbfafe1f0"  # Ubuntu 20.04
+  instance_type          = "t2.micro"
+  subnet_id              = aws_subnet.private.id
+  vpc_security_group_ids = [aws_security_group.private.id]
+  key_name               = "your-key-pair"
+
+  tags = {
+    Name = "private-app-server"
+    Tier = "application"
+  }
+}
+```
+
+---
+
+## 🔧 Configuration Files
+
+### `variables.tf` (Recommended Addition)
+
+```hcl
+variable "aws_region" {
+  description = "AWS region for resources"
+  type        = string
+  default     = "us-east-1"
+}
+
+variable "vpc_cidr" {
+  description = "CIDR block for VPC"
+  type        = string
+  default     = "10.0.0.0/24"
+}
+
+variable "public_subnet_cidr" {
+  description = "CIDR block for public subnet"
+  type        = string
+  default     = "10.0.0.0/26"
+}
+
+variable "private_subnet_cidr" {
+  description = "CIDR block for private subnet"
+  type        = string
+  default     = "10.0.0.64/26"
+}
+
+variable "availability_zone" {
+  description = "Availability zone"
+  type        = string
+  default     = "us-east-1a"
+}
+
+variable "instance_type" {
+  description = "EC2 instance type"
+  type        = string
+  default     = "t2.micro"
+}
+
+variable "key_name" {
+  description = "SSH key pair name"
+  type        = string
+  default     = "your-key-pair"
+}
+
+variable "environment" {
+  description = "Environment name"
+  type        = string
+  default     = "production"
+}
+```
+
+### `outputs.tf` (Recommended Addition)
+
+```hcl
+output "vpc_id" {
+  description = "VPC ID"
+  value       = aws_vpc.main.id
+}
+
+output "public_subnet_id" {
+  description = "Public subnet ID"
+  value       = aws_subnet.public.id
+}
+
+output "private_subnet_id" {
+  description = "Private subnet ID"
+  value       = aws_subnet.private.id
+}
+
+output "internet_gateway_id" {
+  description = "Internet Gateway ID"
+  value       = aws_internet_gateway.igw.id
+}
+
+output "nat_gateway_id" {
+  description = "NAT Gateway ID"
+  value       = aws_nat_gateway.nat.id
+}
+
+output "public_ec2_ip" {
+  description = "Public EC2 instance public IP"
+  value       = aws_instance.public.public_ip
+}
+
+output "private_ec2_ip" {
+  description = "Private EC2 instance private IP"
+  value       = aws_instance.private.private_ip
+}
+
+output "public_security_group_id" {
+  description = "Public security group ID"
+  value       = aws_security_group.public.id
+}
+
+output "private_security_group_id" {
+  description = "Private security group ID"
+  value       = aws_security_group.private.id
+}
+```
+
+---
+
+## 💾 Remote State Backend
+
+### S3 + DynamoDB Configuration
+
+**`backend.tf`:**
+```hcl
+terraform {
+  backend "s3" {
+    bucket         = "terraform-state-bucket-unique-name"
+    key            = "vpc/terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+    dynamodb_table = "terraform-state-lock"
+  }
+}
+```
+
+### Setup Backend Resources
+
+```bash
+# Create S3 bucket
+aws s3api create-bucket \
+    --bucket terraform-state-bucket-unique-name \
+    --region us-east-1
+
+# Enable versioning
+aws s3api put-bucket-versioning \
+    --bucket terraform-state-bucket-unique-name \
+    --versioning-configuration Status=Enabled
+
+# Enable encryption
+aws s3api put-bucket-encryption \
+    --bucket terraform-state-bucket-unique-name \
+    --server-side-encryption-configuration '{
+        "Rules": [{
+            "ApplyServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+            }
+        }]
+    }'
+
+# Create DynamoDB table
+aws dynamodb create-table \
+    --table-name terraform-state-lock \
+    --attribute-definitions AttributeName=LockID,AttributeType=S \
+    --key-schema AttributeName=LockID,KeyType=HASH \
+    --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+    --region us-east-1
+```
+
+---
+
+## 📊 Terraform Commands Reference
+
+### Essential Commands
+
+```bash
+# Initialize (first time)
+terraform init
+
+# Validate syntax
+terraform validate
+
+# Format code
+terraform fmt
+
+# Plan changes (dry run)
+terraform plan
+
+# Plan with variable file
+terraform plan -var-file="prod.tfvars"
+
+# Apply changes
+terraform apply
+
+# Apply without confirmation
+terraform apply -auto-approve
+
+# Show current state
+terraform show
+
+# List resources
+terraform state list
+
+# Destroy specific resource
+terraform destroy -target=aws_instance.public
+
+# Destroy everything
+terraform destroy -auto-approve
+
+# Refresh state
+terraform refresh
+
+# Import existing resource
+terraform import aws_instance.example i-1234567890abcdef0
+
+# Output values
+terraform output
+
+# Specific output
+terraform output vpc_id
+
+# Unlock state (if locked)
+terraform force-unlock LOCK_ID
+```
+
+---
+
+## 💰 Cost Estimation
+
+### Monthly Cost Breakdown (us-east-1)
+
+| Resource | Configuration | Monthly Cost |
+|----------|--------------|--------------|
+| **VPC** | Free tier | $0 |
+| **Subnets** | Free | $0 |
+| **Internet Gateway** | Free | $0 |
+| **NAT Gateway** | 1 NAT Gateway | ~$32 |
+| **Elastic IP** | 1 EIP (attached) | $0 |
+| **EC2 Public** | t2.micro (on-demand) | ~$8.50 |
+| **EC2 Private** | t2.micro (on-demand) | ~$8.50 |
+| **EBS Volumes** | 2x 8GB gp2 | ~$1.60 |
+| **Data Transfer** | 10GB NAT | ~$0.90 |
+| **TOTAL** | | **~$51.50/month** |
+
+### 💡 Cost Optimization
+
+```hcl
+# Use spot instances for non-critical workloads
+resource "aws_instance" "private" {
+  instance_market_options {
+    market_type = "spot"
+    spot_options {
+      max_price = "0.01"
+    }
+  }
+}
+
+# Delete NAT Gateway in dev environments
+# Access private instances via bastion instead
+```
+
+---
+
+## 🐛 Troubleshooting
+
+<details>
+<summary><b>Error: Backend initialization failed</b></summary>
+
+**Problem:** S3 bucket or DynamoDB table doesn't exist
 
 **Solution:**
 ```bash
-# Check stack events
-aws cloudformation describe-stack-events \
-    --stack-name three-tier-vpc-prod \
-    --max-items 10
+# Create backend resources first
+aws s3 mb s3://terraform-state-bucket-unique-name
+aws dynamodb create-table --table-name terraform-state-lock ...
 
-# Delete failed stack
-aws cloudformation delete-stack \
-    --stack-name three-tier-vpc-prod
+# Or use local backend temporarily
+# Comment out backend.tf and run:
+terraform init -migrate-state
 ```
 
 </details>
 
 <details>
-<summary><b>NAT Gateway Not Working</b></summary>
+<summary><b>Error: Invalid AMI ID</b></summary>
 
-**Verification:**
+**Problem:** AMI not available in your region
+
+**Solution:**
 ```bash
-# Check NAT Gateway status
-aws ec2 describe-nat-gateways \
-    --filter "Name=state,Values=available"
+# Find Ubuntu 20.04 AMI for your region
+aws ec2 describe-images \
+    --owners 099720109477 \
+    --filters "Name=name,Values=ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*" \
+    --query 'Images[0].ImageId' \
+    --region us-east-1
 
-# Verify route table
-aws ec2 describe-route-tables \
-    --filters "Name=tag:Name,Values=*Private*"
+# Update main.tf with correct AMI
 ```
 
 </details>
 
 <details>
-<summary><b>Cannot Connect to Private Instances</b></summary>
+<summary><b>Error: State lock timeout</b></summary>
 
-**Use Bastion Host:**
+**Problem:** Previous Terraform run didn't release lock
+
+**Solution:**
 ```bash
-# SSH through bastion in public subnet
-ssh -i key.pem ec2-user@bastion-public-ip
+# Get lock ID from error message
+terraform force-unlock LOCK_ID
 
-# Then SSH to private instance
-ssh ec2-user@private-instance-ip
+# Verify no other Terraform processes running
+ps aux | grep terraform
 ```
 
 </details>
+
+<details>
+<summary><b>Can't SSH to private instance</b></summary>
+
+**Solution:**
+```bash
+# SSH through public instance (bastion)
+ssh -i key.pem ubuntu@PUBLIC_IP
+
+# From public instance
+ssh ubuntu@PRIVATE_IP
+
+# Or use AWS Systems Manager Session Manager (no SSH needed)
+```
+
+</details>
+
+---
+
+## 🎓 Best Practices
+
+### ✅ Do's
+
+- ✅ Use **remote state** (S3) for team collaboration
+- ✅ Enable **state locking** (DynamoDB) to prevent conflicts
+- ✅ Use **variables** for reusable values
+- ✅ Add **tags** to all resources
+- ✅ Use **modules** for larger projects
+- ✅ Run `terraform plan` before `apply`
+- ✅ Use **.gitignore** for sensitive files
+- ✅ Enable **versioning** on S3 state bucket
+- ✅ Use **workspaces** for multiple environments
+
+### ❌ Don'ts
+
+- ❌ Don't commit `.tfstate` files to Git
+- ❌ Don't commit `.tfvars` with secrets
+- ❌ Don't manually edit state files
+- ❌ Don't use `destroy -auto-approve` in production
+- ❌ Don't hardcode sensitive values
+- ❌ Don't skip `terraform plan`
+- ❌ Don't run multiple applies simultaneously
 
 ---
 
@@ -665,31 +824,55 @@ ssh ec2-user@private-instance-ip
 
 | Topic | Resource | Level |
 |-------|----------|-------|
-| **AWS VPC** | [AWS VPC Documentation](https://docs.aws.amazon.com/vpc/) | Beginner |
-| **CloudFormation** | [AWS CloudFormation Guide](https://docs.aws.amazon.com/cloudformation/) | Intermediate |
-| **Multi-Tier Architecture** | [AWS Architecture Center](https://aws.amazon.com/architecture/) | Advanced |
-| **Security Best Practices** | [AWS Well-Architected](https://aws.amazon.com/architecture/well-architected/) | All Levels |
+| **Terraform Basics** | [HashiCorp Learn](https://learn.hashicorp.com/terraform) | Beginner |
+| **AWS VPC** | [AWS VPC Guide](https://docs.aws.amazon.com/vpc/) | Beginner |
+| **Terraform AWS Provider** | [Provider Docs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs) | Intermediate |
+| **State Management** | [Terraform State](https://www.terraform.io/docs/language/state/index.html) | Advanced |
+| **Best Practices** | [Terraform Style Guide](https://www.terraform.io/docs/language/syntax/style.html) | All Levels |
 
 ---
 
-## 🚀 Future Enhancements
+## 🚀 Next Steps
 
-### Roadmap
+### Extend This Project
 
-- [x] Core VPC networking
-- [x] Multi-AZ subnets
-- [x] Security groups
-- [ ] **Application Load Balancer**
-- [ ] **Auto Scaling Groups**
-- [ ] **RDS Multi-AZ deployment**
-- [ ] **ElastiCache for session management**
-- [ ] **CloudWatch dashboards**
-- [ ] **AWS WAF integration**
-- [ ] **Route 53 DNS**
-- [ ] **ACM SSL certificates**
-- [ ] **Container support (ECS/EKS)**
-- [ ] **CI/CD pipeline**
-- [ ] **Disaster recovery automation**
+1. **Add More Availability Zones**
+   ```hcl
+   # Create subnets in multiple AZs
+   resource "aws_subnet" "public_az2" {
+     availability_zone = "us-east-1b"
+     # ...
+   }
+   ```
+
+2. **Add Application Load Balancer**
+   ```hcl
+   resource "aws_lb" "web" {
+     name               = "web-alb"
+     load_balancer_type = "application"
+     subnets            = [aws_subnet.public.id, aws_subnet.public_az2.id]
+   }
+   ```
+
+3. **Add Auto Scaling Group**
+   ```hcl
+   resource "aws_autoscaling_group" "web" {
+     desired_capacity = 2
+     max_size         = 4
+     min_size         = 1
+     # ...
+   }
+   ```
+
+4. **Add RDS Database**
+   ```hcl
+   resource "aws_db_instance" "main" {
+     engine         = "mysql"
+     instance_class = "db.t3.micro"
+     multi_az       = true
+     # ...
+   }
+   ```
 
 ---
 
@@ -700,7 +883,7 @@ ssh ec2-user@private-instance-ip
 ```
 Copyright (c) 2024 Sujal Kamanna
 
-Permission is hereby granted, free of charge, to any person obtaining a copy...
+Permission is hereby granted, free of charge...
 ```
 
 📄 [Full License](LICENSE)
@@ -712,11 +895,11 @@ Permission is hereby granted, free of charge, to any person obtaining a copy...
 <div align="center">
 
 **Sujal Kamanna**  
-*Cloud & DevOps Engineer*
+*DevOps & Cloud Engineer*
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/yourprofile)
-[![GitHub](https://img.shields.io/badge/GitHub-Follow-black?style=for-the-badge&logo=github)](https://github.com/sujalkamanna)
-[![Email](https://img.shields.io/badge/Email-Contact-red?style=for-the-badge&logo=gmail)](mailto:your@email.com)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/sujalkamanna)
+[![GitHub](https://img.shields.io/badge/GitHub-Follow-181717?style=for-the-badge&logo=github)](https://github.com/sujalkamanna)
+[![Terraform](https://img.shields.io/badge/Terraform-Registry-623CE4?style=for-the-badge&logo=terraform)](https://registry.terraform.io/)
 
 </div>
 
@@ -724,10 +907,9 @@ Permission is hereby granted, free of charge, to any person obtaining a copy...
 
 ## 🙏 Acknowledgments
 
-Special thanks to:
-- **AWS** for comprehensive documentation
-- **CloudFormation community** for best practices
-- **AWS Solutions Architects** for architecture patterns
+- **HashiCorp** for Terraform
+- **AWS** for cloud infrastructure
+- **Terraform community** for modules and best practices
 
 ---
 
@@ -735,9 +917,9 @@ Special thanks to:
 
 <div align="center">
 
-![GitHub stars](https://img.shields.io/github/stars/sujalkamanna/three-tier-architecture?style=social)
-![GitHub forks](https://img.shields.io/github/forks/sujalkamanna/three-tier-architecture?style=social)
-![GitHub watchers](https://img.shields.io/github/watchers/sujalkamanna/three-tier-architecture?style=social)
+![GitHub stars](https://img.shields.io/github/stars/sujalkamanna/terraform-vpc?style=social)
+![GitHub forks](https://img.shields.io/github/forks/sujalkamanna/terraform-vpc?style=social)
+![Terraform](https://img.shields.io/badge/Terraform-1.0+-623CE4?logo=terraform)
 
 </div>
 
@@ -745,12 +927,12 @@ Special thanks to:
 
 <div align="center">
 
-### ⭐ If this helped you, please star the repository!
+### ⭐ Star this repo if Terraform IaC helped you!
 
-**Built with ❤️ for the AWS community**
+**Built with ❤️ using Infrastructure as Code**
 
 ---
 
-**[⬆ Back to Top](#%EF%B8%8F-aws-three-tier-architecture-with-cloudformation)**
+**[⬆ Back to Top](#%EF%B8%8F-terraform-aws-vpc-infrastructure)**
 
 </div>
