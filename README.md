@@ -17,16 +17,6 @@
 
 ---
 
-## 📸 Architecture
-
-Below is the network architecture of the VPC setup:
-
-![VPC Architecture](outputs/archicture.jpg)
-
----
-
-This project uses **Terraform** to create a **VPC infrastructure** on AWS, including public and private subnets, Internet Gateway, NAT Gateway, route tables, security groups, and EC2 instances.
-
 ## 🌟 Why This Project?
 
 Building AWS infrastructure manually is **time-consuming**, **error-prone**, and **not reproducible**. This Terraform project solves that by providing:
@@ -41,11 +31,18 @@ Building AWS infrastructure manually is **time-consuming**, **error-prone**, and
 
 ---
 
+## 📸 Architecture
+
+Below is the network architecture of the VPC setup:
+
 ## 📐 Architecture Overview
 
 ### 🎨 Visual Network Design
 
 ![VPC Architecture](outputs/archicture.jpg)
+
+This project uses **Terraform** to create a **VPC infrastructure** on AWS, including public and private subnets, Internet Gateway, NAT Gateway, route tables, security groups, and EC2 instances.
+
 
 ### 🔄 Traffic Flow Diagram
 
@@ -81,12 +78,7 @@ graph TB
     
     PrivateRT --> PrivateEC2
     NAT -.-> PrivateRT
-    
-    style Users fill:#e1f5ff
-    style IGW fill:#fff3cd
-    style PublicEC2 fill:#d4edda
-    style PrivateEC2 fill:#f8d7da
-    style NAT fill:#d1ecf1
+
 ```
 
 ---
@@ -283,13 +275,7 @@ graph LR
     D -->|Changes Needed| F[✏️ Edit .tf files]
     F --> C
     E --> G[✅ Infrastructure Ready]
-    
-    style A fill:#e1f5ff
-    style B fill:#fff3cd
-    style C fill:#d4edda
-    style D fill:#f8d7da
-    style E fill:#d1ecf1
-    style G fill:#d4edda
+
 ```
 
 ---
@@ -828,7 +814,7 @@ ssh ubuntu@PRIVATE_IP
 | **AWS VPC** | [AWS VPC Guide](https://docs.aws.amazon.com/vpc/) | Beginner |
 | **Terraform AWS Provider** | [Provider Docs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs) | Intermediate |
 | **State Management** | [Terraform State](https://www.terraform.io/docs/language/state/index.html) | Advanced |
-| **Best Practices** | [Terraform Style Guide](https://www.terraform.io/docs/language/syntax/style.html) | All Levels |
+| **Best Practices** | [Terraform Style Guide](https://www.terraform.io/docs/language/syntax/.html) | All Levels |
 
 ---
 
